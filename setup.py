@@ -50,7 +50,12 @@ setup(
         "Topic :: Utilities",
     ],
     install_requires=[
-        "financeager>=0.24.0.0",
+        # yapf: disable
+        "financeager @ git+https://git@github.com/pylipp/financeager@refactor/move-flask-code#egg=financeager",  # noqa
+        # yapf: enable
+        "Flask==1.0.2",
+        "Flask-RESTful==0.3.5",
+        "requests>=2.20.0",
     ],
     extras_require={
         "develop": [
