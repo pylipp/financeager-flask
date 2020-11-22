@@ -22,7 +22,7 @@ release: Changelog.md setup.py
 
 coverage:
 	coverage erase
-	coverage run --source financeager setup.py test
+	coverage run --source financeager_flask setup.py test
 	coverage report
 	coverage html
 
