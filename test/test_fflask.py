@@ -20,7 +20,7 @@ class CreateAppNoDataDirTestCase(unittest.TestCase):
         mocked_warning.assert_called_once_with(
             "'data_dir' not given. Application data is stored in "
             "memory and is lost when the flask app terminates. Set "
-            "the environment variable FINANCEAGER_DATA_DIR "
+            "the environment variable FINANCEAGER_FLASK_DATA_DIR "
             "accordingly for persistent data storage.")
 
     def test_debug(self):
@@ -30,13 +30,13 @@ class CreateAppNoDataDirTestCase(unittest.TestCase):
 
     def test_data_dir_env_variable(self):
         data_dir = tempfile.mkdtemp(prefix="financeager-")
-        environ["FINANCEAGER_DATA_DIR"] = data_dir
+        environ["FINANCEAGER_FLASK_DATA_DIR"] = data_dir
         with mock.patch("os.makedirs") as mocked_makedirs:
             create_app(data_dir=None)
             # First call is from inside setup_log_file_handler()
             self.assertEqual(mocked_makedirs.call_count, 2)
             mocked_makedirs.assert_called_with(data_dir, exist_ok=True)
-        del environ["FINANCEAGER_DATA_DIR"]
+        del environ["FINANCEAGER_FLASK_DATA_DIR"]
 
     def test_bad_request(self):
         app = create_app()

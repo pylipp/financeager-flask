@@ -15,7 +15,7 @@ To run `financeager` as client-server application, start the flask webservice by
     export FLASK_APP=financeager_flask/fflask.py
     flask run  # --help for more info
 
->   This does not store data persistently! Specify the environment variable `FINANCEAGER_DATA_DIR`.
+>   This does not store data persistently! Specify the environment variable `FINANCEAGER_FLASK_DATA_DIR`.
 
 >   For production use, you should wrap `app = fflask.create_app(data_dir=...)` in a WSGI or FCGI (see `examples/` directory).
 
