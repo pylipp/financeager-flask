@@ -1,5 +1,7 @@
 """Utiliary classes for testing."""
-from financeager import clients, config
+from financeager import clients
+
+from financeager_flask import main
 
 
 class Client(clients.LocalServerClient):
@@ -11,7 +13,7 @@ class Client(clients.LocalServerClient):
     def __init__(self):
         f = lambda s: None
         super().__init__(
-            configuration=config.Configuration(),
+            configuration=main._Configuration(),
             sinks=clients.Client.Sinks(f, f))
 
         self.proxy._period_kwargs["data_dir"] = None
