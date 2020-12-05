@@ -1,7 +1,9 @@
 import financeager
-from financeager import clients, exceptions, plugin
+from financeager import clients
+from financeager import exceptions as base_exceptions
+from financeager import plugin
 
-from . import DEFAULT_HOST, DEFAULT_TIMEOUT, httprequests, offline
+from . import DEFAULT_HOST, DEFAULT_TIMEOUT, exceptions, httprequests, offline
 
 
 class _Configuration(plugin.PluginConfiguration):
@@ -51,7 +53,8 @@ class _Client(clients.Client):
                 success = False
 
         # If request was erroneous, it's not supposed to be stored offline
-        if not isinstance(self.latest_exception, exceptions.InvalidRequest) and\
+        if not isinstance(
+                self.latest_exception, base_exceptions.InvalidRequest) and\
                 self.latest_exception is not None and\
                 offline.add(command, **params):
             self.sinks.info(
