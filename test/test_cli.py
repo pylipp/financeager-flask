@@ -5,7 +5,8 @@ import unittest
 from threading import Thread
 from unittest import mock
 
-from financeager import DEFAULT_TABLE, cli, clients, config, entries
+from financeager import (DEFAULT_TABLE, cli, clients, config, entries,
+                         setup_log_file_handler)
 from requests import RequestException, Response
 from requests import get as requests_get
 
@@ -13,6 +14,7 @@ from financeager_flask import fflask, main
 
 TEST_CONFIG_FILEPATH = "/tmp/financeager-test-config"
 TEST_DATA_DIR = tempfile.mkdtemp(prefix="financeager-")
+setup_log_file_handler(data_dir=TEST_DATA_DIR)
 
 
 class CliTestCase(unittest.TestCase):
@@ -33,13 +35,6 @@ class CliTestCase(unittest.TestCase):
         # Mocks to record output of cli.run() call
         self.info = mock.MagicMock()
         self.error = mock.MagicMock()
-
-    def tearDown(self):
-        database_filepath = os.path.join(
-            TEST_DATA_DIR, "{}.json".format(self.__class__.period))
-        # Not all test cases produce database files
-        if os.path.exists(database_filepath):
-            os.remove(database_filepath)
 
     def cli_run(self, command_line, log_method="info", format_args=()):
         """Wrapper around cli.run() function. Adds convenient command line
@@ -301,7 +296,7 @@ host = http://{}
             self.assertIn("500", response)
 
     @mock.patch("financeager_flask.offline.OFFLINE_FILEPATH",
-                "/tmp/financeager-test-offline.json")
+                os.path.join(TEST_DATA_DIR, "financeager-test-offline.json"))
     def test_offline_feature(self):
         with mock.patch("requests.post") as mocked_post:
             # Try do add an item but provoke CommunicationError
