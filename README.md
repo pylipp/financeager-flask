@@ -9,6 +9,11 @@ Plugin that enables you to run [financeager](https://github.com/pylipp/financeag
 
     pip install financeager-flask
 
+For Python>=3.6, installation via [`pipx`](https://pipxproject.github.io/pipx/)  is recommended:
+
+    pipx install financeager
+    pipx inject financeager financeager-flask
+
 ## Usage
 
 To run `financeager` as client-server application, start the flask webservice by
