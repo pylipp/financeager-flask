@@ -18,7 +18,7 @@ For Python>=3.6, installation via [`pipx`](https://pipxproject.github.io/pipx/) 
 
 To run `financeager` as client-server application, start the flask webservice by
 
-    export FLASK_APP=financeager_flask/fflask.py
+    export FLASK_APP=financeager_flask.fflask
     flask run  # --help for more info
 
 >   This does not store data persistently! Specify the environment variable `FINANCEAGER_FLASK_DATA_DIR`.
