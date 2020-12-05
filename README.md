@@ -1,8 +1,9 @@
 [![Build Status](https://travis-ci.org/pylipp/financeager-flask.svg?branch=master)](https://travis-ci.org/pylipp/financeager-flask)
+[![Coverage Status](https://coveralls.io/repos/github/pylipp/financeager-flask/badge.svg?branch=master)](https://coveralls.io/github/pylipp/financeager-flask?branch=master)
 
 # financeager-flask
 
-Plugin that enables you to run `financeager` as a Flask-powered webservice!
+Plugin that enables you to run [financeager](https://github.com/pylipp/financeager) as a Flask-powered webservice!
 
 ## Installation
 
