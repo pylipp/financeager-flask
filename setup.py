@@ -50,11 +50,9 @@ setup(
         "Topic :: Utilities",
     ],
     install_requires=[
-        # yapf: disable
-        "financeager @ git+https://git@github.com/pylipp/financeager@refactor/move-flask-code#egg=financeager",  # noqa
-        # yapf: enable
-        "Flask==1.0.2",
-        "Flask-RESTful==0.3.5",
+        "financeager>=0.24.0.0",
+        "Flask>=1.0.2",
+        "Flask-RESTful>=0.3.5",
         "requests>=2.20.0",
     ],
     extras_require={
@@ -63,8 +61,8 @@ setup(
             "setuptools>=38.6.0",
             "wheel>=0.31.0",
             "coverage>=4.4.2",
-            "pre-commit==1.14.4",
-            "gitlint==0.12.0",
+            "pre-commit<2.0.0",
+            "gitlint>=0.15.0",
         ],
     },
     packages=find_packages(exclude=["test"]),
