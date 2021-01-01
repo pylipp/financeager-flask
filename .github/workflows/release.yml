@@ -19,6 +19,13 @@ jobs:
     - name: Install dependencies
       run: |
         pip install -U .[develop]
+    - name: Construct release body
+      id: construct
+      run: |
+        RELEASEBODY=$(awk -v RS='' '/\[${{ github.ref }}\]/ {print $0}'  Changelog.md  | tail -n+2)
+        echo "::set-env name=body::${RELEASEBODY}"
+      env:
+        REPOSITORY: ${{ github.event.repository.name }}
     - name: Create Github release
       uses: actions/create-release@v1
       env:
@@ -27,7 +34,7 @@ jobs:
         tag_name: ${{ github.ref }}
         release_name: ${{ github.ref }}
         body: |
-            awk -v RS='' '/\[${{ github.ref }}\]/ {print $0}'  Changelog.md  | tail -n+2
+          ${{ steps.construct.outputs.RELEASEBODY }}
     - name: Build package and publish to PyPI
       env:
         TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
