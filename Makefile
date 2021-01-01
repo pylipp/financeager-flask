@@ -11,7 +11,7 @@ install:
 	gitlint install-hook
 
 test:
-	python setup.py test
+	python -m unittest
 
 release: Changelog.md setup.py
 	git push --tags origin master
@@ -22,7 +22,7 @@ release: Changelog.md setup.py
 
 coverage:
 	coverage erase
-	coverage run --source financeager_flask setup.py test
+	coverage run --source financeager_flask -m unittest
 	coverage report
 	coverage html
 
