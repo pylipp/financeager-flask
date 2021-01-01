@@ -4,6 +4,8 @@ on:
   push:
     tags:
       - v*.*.*.*
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
 
 jobs:
   publish:
@@ -22,7 +24,7 @@ jobs:
     - name: Construct release body
       id: construct
       run: |
-        RELEASEBODY=$(awk -v RS='' '/\[${{ github.ref }}\]/ {print $0}'  Changelog.md  | tail -n+2)
+        RELEASEBODY=$(awk -v RS='' '/\\[${{ github.ref }}\\]/ {print $0}'  Changelog.md  | tail -n+2)
         echo "::set-env name=body::${RELEASEBODY}"
       env:
         REPOSITORY: ${{ github.event.repository.name }}
