@@ -5,7 +5,7 @@ from financeager import DATA_DIR
 OFFLINE_FILEPATH = os.path.join(DATA_DIR, "offline.json")
 
 # URL endpoints
-PERIODS_TAIL = "/periods"
+POCKETS_TAIL = "/pockets"
 COPY_TAIL = "/copy"
 
 # HTTP communication defaults

@@ -3,9 +3,9 @@ import http
 import json
 
 import requests
-from financeager import DEFAULT_TABLE, default_period_name, exceptions
+from financeager import DEFAULT_POCKET_NAME, DEFAULT_TABLE, exceptions
 
-from . import COPY_TAIL, DEFAULT_HOST, PERIODS_TAIL
+from . import COPY_TAIL, DEFAULT_HOST, POCKETS_TAIL
 
 
 class Proxy:
@@ -23,7 +23,7 @@ class Proxy:
         """Convert specified command and data into HTTP request, send it to
         webservice, and return response. Handle error responses.
         The data kwargs are passed to the HTTP request.
-        'period' and 'table_name' data fields are substituted, if None.
+        'pocket' and 'table_name' data fields are substituted, if None.
 
         :return: dict. See Server class for possible keys
         :raise: ValueError if invalid command given
@@ -31,13 +31,13 @@ class Proxy:
             InvalidRequest on invalid requests
         """
 
-        period = data.pop("period", None) or default_period_name()
+        pocket = data.pop("pocket", None) or DEFAULT_POCKET_NAME
 
         host = self.http_config.get("host", DEFAULT_HOST)
-        base_url = "{}{}".format(host, PERIODS_TAIL)
-        period_url = "{}/{}".format(base_url, period)
+        base_url = "{}{}".format(host, POCKETS_TAIL)
+        pocket_url = "{}/{}".format(base_url, pocket)
         copy_url = "{}{}".format(host, COPY_TAIL)
-        eid_url = "{}/{}/{}".format(period_url,
+        eid_url = "{}/{}/{}".format(pocket_url,
                                     data.get("table_name") or DEFAULT_TABLE,
                                     data.get("eid"))
 
@@ -56,15 +56,15 @@ class Proxy:
             kwargs["json"] = data or None
 
         if command == "list":
-            url = period_url
+            url = pocket_url
             function = requests.get
         elif command == "remove":
             url = eid_url
             function = requests.delete
         elif command == "add":
-            url = period_url
+            url = pocket_url
             function = requests.post
-        elif command == "periods":
+        elif command == "pockets":
             url = base_url
             function = requests.post
         elif command == "copy":

@@ -50,7 +50,7 @@ setup(
         "Topic :: Utilities",
     ],
     install_requires=[
-        "financeager>=0.24.0.0",
+        "financeager>=0.25.0.0",
         "Flask>=1.0.2",
         "Flask-RESTful>=0.3.5",
         "requests>=2.20.0",

@@ -8,8 +8,8 @@ from flask_restful import Resource, reqparse
 logger = init_logger(__name__)
 
 copy_parser = reqparse.RequestParser()
-copy_parser.add_argument("destination_period", required=True)
-copy_parser.add_argument("source_period", required=True)
+copy_parser.add_argument("destination_pocket", required=True)
+copy_parser.add_argument("source_pocket", required=True)
 copy_parser.add_argument("eid", required=True, type=int)
 copy_parser.add_argument("table_name")
 
@@ -70,46 +70,46 @@ class LogResource(Resource):
         return super().dispatch_request(*args, **kwargs)
 
 
-class PeriodsResource(LogResource):
+class PocketsResource(LogResource):
     def post(self):
-        return self.run_safely("periods")
+        return self.run_safely("pockets")
 
 
-class PeriodResource(LogResource):
-    def get(self, period_name):
+class PocketResource(LogResource):
+    def get(self, pocket_name):
         args = json.loads(flask.request.json or "{}")
         return self.run_safely(
-            "list", error_code=400, period=period_name, **args)
+            "list", error_code=400, pocket=pocket_name, **args)
 
-    def post(self, period_name):
+    def post(self, pocket_name):
         args = put_parser.parse_args()
         return self.run_safely(
-            "add", error_code=400, period=period_name, **args)
+            "add", error_code=400, pocket=pocket_name, **args)
 
 
 class EntryResource(LogResource):
-    def get(self, period_name, table_name, eid):
+    def get(self, pocket_name, table_name, eid):
         return self.run_safely(
             "get",
             error_code=404,
-            period=period_name,
+            pocket=pocket_name,
             table_name=table_name,
             eid=eid)
 
-    def delete(self, period_name, table_name, eid):
+    def delete(self, pocket_name, table_name, eid):
         return self.run_safely(
             "remove",
             error_code=404,
-            period=period_name,
+            pocket=pocket_name,
             table_name=table_name,
             eid=eid)
 
-    def patch(self, period_name, table_name, eid):
+    def patch(self, pocket_name, table_name, eid):
         args = update_parser.parse_args()
         return self.run_safely(
             "update",
             error_code=400,
-            period=period_name,
+            pocket=pocket_name,
             table_name=table_name,
             eid=eid,
             **args)

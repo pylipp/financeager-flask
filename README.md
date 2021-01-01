@@ -91,7 +91,7 @@ The following diagram sketches the relationship between financeager's modules, a
             ¦                     Λ
             V                     ¦
     +-------------------------------------+
-    |                period               |
+    |                pocket               |
     +-------------------------------------+
 
 ## Known bugs

@@ -14,8 +14,9 @@ class AddTestCase(unittest.TestCase):
             os.path.expanduser("~"), "offline_test.json")
 
     def test_add_recover(self):
-        period_name = "123"
-        kwargs = dict(name="money", value=111, date="01-31", period=period_name)
+        pocket_name = "123"
+        kwargs = dict(
+            name="money", value=111, date="2019-01-31", pocket=pocket_name)
         self.assertTrue(add("add", offline_filepath=self.filepath, **kwargs))
 
         content = _load(self.filepath)
@@ -29,7 +30,7 @@ class AddTestCase(unittest.TestCase):
         client = utils.Client()
         self.assertTrue(recover(client, offline_filepath=self.filepath))
 
-        element = client.proxy.run("get", eid=1, period=period_name)["element"]
+        element = client.proxy.run("get", eid=1, pocket=pocket_name)["element"]
         self.assertEqual(element["name"], "money")
         self.assertEqual(element["value"], 111)
 
@@ -40,8 +41,8 @@ class AddTestCase(unittest.TestCase):
         self.assertFalse(recover(None, offline_filepath=self.filepath))
 
     def test_failed_recover(self):
-        period_name = "123"
-        kwargs = dict(name="money", value=111, period=period_name)
+        pocket_name = "123"
+        kwargs = dict(name="money", value=111, pocket=pocket_name)
         command = "add"
         self.assertTrue(add(command, offline_filepath=self.filepath, **kwargs))
         self.assertTrue(add(command, offline_filepath=self.filepath, **kwargs))

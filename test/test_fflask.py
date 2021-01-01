@@ -42,7 +42,7 @@ class CreateAppNoDataDirTestCase(unittest.TestCase):
         app = create_app()
         app.testing = True
         with app.test_client() as client:
-            response = client.post("/periods/2000")
+            response = client.post("/pockets/2000")
         # Expect Bad Request due to missing data (name and value)
         self.assertEqual(response.status_code, 400)
 

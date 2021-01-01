@@ -24,13 +24,13 @@ class CliTestCase(unittest.TestCase):
         with open(TEST_CONFIG_FILEPATH, "w") as file:
             file.write(cls.CONFIG_FILE_CONTENT)
 
-        cls.period = 1900
+        cls.pocket = 1900
 
     def setUp(self):
         # Separate test runs by running individual test methods using distinct
-        # periods (especially crucial for CliFlaskTestCase which uses a single
+        # pockets (especially crucial for CliFlaskTestCase which uses a single
         # Flask instance for all tests)
-        self.__class__.period += 1
+        self.__class__.pocket += 1
 
         # Mocks to record output of cli.run() call
         self.info = mock.MagicMock()
@@ -38,7 +38,7 @@ class CliTestCase(unittest.TestCase):
 
     def cli_run(self, command_line, log_method="info", format_args=()):
         """Wrapper around cli.run() function. Adds convenient command line
-        options (period and config filepath). Executes the actual run() function
+        options (pocket and config filepath). Executes the actual run() function
         while patching the module logger info and error methods to catch their
         call arguments.
 
@@ -61,8 +61,8 @@ class CliTestCase(unittest.TestCase):
         command = args[0]
 
         # Exclude option from subcommand parsers that would be confused
-        if command not in ["copy", "periods"]:
-            args.extend(["--period", str(self.period)])
+        if command not in ["copy", "pockets"]:
+            args.extend(["--pocket", str(self.pocket)])
 
         args.extend(["--config-filepath", TEST_CONFIG_FILEPATH])
 
@@ -94,7 +94,7 @@ class CliTestCase(unittest.TestCase):
         if command in ["add", "update", "remove", "copy"]:
             return response["id"]
 
-        if command in ["get", "list", "periods"] and log_method == "info":
+        if command in ["get", "list", "pockets"] and log_method == "info":
             return cli._format_response(
                 response,
                 command,
@@ -168,8 +168,8 @@ host = http://{}
         remove_entry_id = self.cli_run("remove {}", format_args=entry_id)
         self.assertEqual(remove_entry_id, entry_id)
 
-        response = self.cli_run("periods")
-        self.assertIn(str(self.period), response)
+        response = self.cli_run("pockets")
+        self.assertIn(str(self.pocket), response)
 
     def test_add_get_remove_via_eid(self):
         entry_id = self.cli_run("add donuts -50 -c sweets")
@@ -212,7 +212,7 @@ host = http://{}
 
     def test_recurrent_entry(self):
         entry_id = self.cli_run("add cookies -10 -c food -t recurrent -f "
-                                "half-yearly -s 01-01 -e 12-31")
+                                "half-yearly -s 2020-01-01 -e 2020-12-31")
         self.assertEqual(entry_id, 1)
 
         response = self.cli_run("get {} -t recurrent", format_args=entry_id)
@@ -234,20 +234,20 @@ host = http://{}
         self.assertEqual(response, "")
 
     def test_copy(self):
-        destination_period = self.period + 1
-        self.__class__.period += 1
+        destination_pocket = self.pocket + 1
+        self.__class__.pocket += 1
 
         source_entry_id = self.cli_run("add donuts -50 -c sweets")
 
         destination_entry_id = self.cli_run(
             "copy {} -s {} -d {}",
-            format_args=(source_entry_id, self.period, destination_period))
+            format_args=(source_entry_id, self.pocket, destination_pocket))
 
-        # Swap period to trick cli_run()
-        self.period, destination_period = destination_period, self.period
+        # Swap pocket to trick cli_run()
+        self.pocket, destination_pocket = destination_pocket, self.pocket
         destination_printed_content = self.cli_run(
             "get {}", format_args=destination_entry_id).splitlines()
-        self.period, destination_period = destination_period, self.period
+        self.pocket, destination_pocket = destination_pocket, self.pocket
 
         source_printed_content = self.cli_run(
             "get {}", format_args=source_entry_id).splitlines()
@@ -258,13 +258,13 @@ host = http://{}
                              source_printed_content)
 
     def test_copy_nonexisting_entry(self):
-        destination_period = self.period + 1
-        self.__class__.period += 1
+        destination_pocket = self.pocket + 1
+        self.__class__.pocket += 1
 
         response = self.cli_run(
             "copy 0 -s {} -d {}",
             log_method="error",
-            format_args=(self.period, destination_period))
+            format_args=(self.pocket, destination_pocket))
         self.assertIn("404", response)
 
     def test_default_category(self):

@@ -6,7 +6,7 @@ from financeager import (init_logger, make_log_stream_handler_verbose, server,
 from flask import Flask
 from flask_restful import Api
 
-from . import COPY_TAIL, PERIODS_TAIL, resources
+from . import COPY_TAIL, POCKETS_TAIL, resources
 
 logger = init_logger(__name__)
 
@@ -51,16 +51,16 @@ def create_app(data_dir=None, config=None):
 
     api = Api(app)
     api.add_resource(
-        resources.PeriodsResource, PERIODS_TAIL, resource_class_args=(srv,))
+        resources.PocketsResource, POCKETS_TAIL, resource_class_args=(srv,))
     api.add_resource(
         resources.CopyResource, COPY_TAIL, resource_class_args=(srv,))
     api.add_resource(
-        resources.PeriodResource,
-        "{}/<period_name>".format(PERIODS_TAIL),
+        resources.PocketResource,
+        "{}/<pocket_name>".format(POCKETS_TAIL),
         resource_class_args=(srv,))
     api.add_resource(
         resources.EntryResource,
-        "{}/<period_name>/<table_name>/<eid>".format(PERIODS_TAIL),
+        "{}/<pocket_name>/<table_name>/<eid>".format(POCKETS_TAIL),
         resource_class_args=(srv,))
 
     # Assign attribute such that e.g. test_cli can access Server methods

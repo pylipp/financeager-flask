@@ -16,4 +16,4 @@ class Client(clients.LocalServerClient):
             configuration=main._Configuration(),
             sinks=clients.Client.Sinks(f, f))
 
-        self.proxy._period_kwargs["data_dir"] = None
+        self.proxy._pocket_kwargs["data_dir"] = None

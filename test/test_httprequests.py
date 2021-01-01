@@ -3,7 +3,7 @@ from unittest.mock import patch
 
 from financeager.exceptions import CommunicationError
 
-from financeager_flask import DEFAULT_HOST, PERIODS_TAIL
+from financeager_flask import DEFAULT_HOST, POCKETS_TAIL
 from financeager_flask.httprequests import Proxy as HttpProxy
 
 
@@ -33,9 +33,9 @@ class HttpRequestProxyTestCase(unittest.TestCase):
                 "financeager_flask.httprequests.requests.post",
                 side_effect=self.mock_post) as post_patch:
 
-            proxy.run("periods")
+            proxy.run("pockets")
 
-            url = "{}{}".format(DEFAULT_HOST, PERIODS_TAIL)
+            url = "{}{}".format(DEFAULT_HOST, POCKETS_TAIL)
             kwargs = {
                 "json": None,
                 "auth": (username, password),
@@ -50,7 +50,7 @@ class HttpRequestProxyTestCase(unittest.TestCase):
         proxy = HttpProxy({"host": "http://weird.foodomain.nope", "timeout": 5})
 
         with self.assertRaises(CommunicationError) as cm:
-            proxy.run("get", period=2000, eid=1)
+            proxy.run("get", pocket=2000, eid=1)
 
         error_message = cm.exception.args[0]
         self.assertTrue(error_message.startswith("Error sending request: "))
