@@ -6,13 +6,15 @@
 import os
 import sys
 
-from financeager.fflask import create_app
+from financeager_flask import DATA_DIR
+from financeager_flask.fflask import create_app
 
-path = os.path.expanduser('~/financeager/financeager/fflask.py')
+path = os.path.expanduser('~/financeager-flask/financeager_flask/fflask.py')
 if path not in sys.path:
     sys.path.append(path)
 
 # the 'application' object will be used by the WSGI server
 application = create_app(
-    data_dir=os.path.expanduser('~/.local/share/financeager'),
-    config={"DEBUG": True})
+    data_dir=DATA_DIR,
+    config={"DEBUG": True},
+)

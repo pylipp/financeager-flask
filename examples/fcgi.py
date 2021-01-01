@@ -5,7 +5,7 @@ and FCGI) are installed:
     python3 -m venv ~/.virtualenvs/financeager
     source ~/.virtualenvs/financeager/bin/activate
     pip install -U pip
-    pip install financeager flipflop==1.0
+    pip install financeager-flask flipflop==1.0
 
 The script is placed in ~/fcgi-bin and made executable. Adjust the shebang-line.
 
@@ -38,8 +38,9 @@ https://gist.github.com/tocsinDE/98c423da2724d23c02ff
 https://docs.python.org/3.4/howto/webservers.html
 https://wiki.uberspace.de/webserver:htaccess#verzeichnisschutz
 """
-from financeager import DATA_DIR, fflask
 from flipflop import WSGIServer
+
+from financeager_flask import DATA_DIR, fflask
 
 if __name__ == "__main__":
     # Configure to your liking
