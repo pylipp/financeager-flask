@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/pylipp/financeager-flask.svg?branch=master)](https://travis-ci.org/pylipp/financeager-flask)
+![Build Status](https://github.com/pylipp/financeager-flask/workflows/CI/badge.svg)
 [![Coverage Status](https://coveralls.io/repos/github/pylipp/financeager-flask/badge.svg?branch=master)](https://coveralls.io/github/pylipp/financeager-flask?branch=master)
 
 # financeager-flask
