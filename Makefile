@@ -13,12 +13,8 @@ install:
 test:
 	python -m unittest
 
-release: Changelog.md setup.py
+release:
 	git push --tags origin master
-	hub release create -e -m v$(VERSION) -m "$$(awk -v RS='' '/\[v$(VERSION)\]/' Changelog.md | tail -n+2)" v$(VERSION)
-	rm -rf dist build
-	python setup.py bdist_wheel --universal
-	twine upload dist/*
 
 coverage:
 	coverage erase

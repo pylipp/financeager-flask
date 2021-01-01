@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 ### Changed
 - The upstream `financeager` dependency is updated to v0.25.0.0. The REST API endpoint `/periods` is renamed to `/pockets`.
+- CI testing is performed using Github actions instead of Travis.
 ### Removed
 ### Fixed
 
