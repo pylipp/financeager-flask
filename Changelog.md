@@ -6,7 +6,6 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [unreleased]
 ### Added
 ### Changed
-- The upstream `financeager` dependency is updated to v0.26.0.0. HTTP error codes are more consistent now.
 ### Removed
 ### Fixed
 
