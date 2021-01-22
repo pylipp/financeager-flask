@@ -10,6 +10,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Removed
 ### Fixed
 
+## [v0.3.1.0 - 2021-01-22]
+### Changed
+- The upstream `financeager` dependency is updated to v0.26.0.0. HTTP error codes are more consistent now.
+
 ## [v0.3.0.0] - 2021-01-01
 ### Changed
 - The upstream `financeager` dependency is updated to v0.25.0.0. The REST API endpoint `/periods` is renamed to `/pockets`.
