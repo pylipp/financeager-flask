@@ -14,7 +14,7 @@ from financeager_flask import fflask, main
 
 TEST_CONFIG_FILEPATH = "/tmp/financeager-test-config"
 TEST_DATA_DIR = tempfile.mkdtemp(prefix="financeager-")
-setup_log_file_handler(data_dir=TEST_DATA_DIR)
+setup_log_file_handler(log_dir=TEST_DATA_DIR)
 
 
 class CliTestCase(unittest.TestCase):
@@ -200,7 +200,7 @@ host = http://{}
 
     def test_update_nonexisting_entry(self):
         response = self.cli_run("update -1 -n a", log_method="error")
-        self.assertIn("400", response)
+        self.assertIn("404", response)
 
     def test_get_nonexisting_entry(self):
         response = self.cli_run("get -1", log_method="error")

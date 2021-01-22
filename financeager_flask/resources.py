@@ -2,7 +2,7 @@
 import json
 
 import flask
-from financeager import init_logger
+from financeager import exceptions, init_logger
 from flask_restful import Resource, reqparse
 
 logger = init_logger(__name__)
@@ -45,7 +45,7 @@ class LogResource(Resource):
         super().__init__(*args, **kwargs)
         self.server = server
 
-    def run_safely(self, command, error_code=500, **kwargs):
+    def run_safely(self, command, **kwargs):
         """Wrapper function for running commands on server. Returns server
         response, if erroneous, including an appropriate error code.
         If an unexpected exception is caught, the method logs it and returns an
@@ -55,7 +55,13 @@ class LogResource(Resource):
             response = self.server.run(command, **kwargs)
 
             if "error" in response:
-                response = (response, error_code)
+                error = response["error"]
+                if isinstance(error, exceptions.PocketEntryNotFound):
+                    error_code = 404
+                else:
+                    error_code = 400
+                response = ({"error": str(error)}, error_code)
+
         except Exception:
             logger.exception("Unexpected error")
             response = ({"error": "unexpected error"}, 500)
@@ -78,37 +84,26 @@ class PocketsResource(LogResource):
 class PocketResource(LogResource):
     def get(self, pocket_name):
         args = json.loads(flask.request.json or "{}")
-        return self.run_safely(
-            "list", error_code=400, pocket=pocket_name, **args)
+        return self.run_safely("list", pocket=pocket_name, **args)
 
     def post(self, pocket_name):
         args = put_parser.parse_args()
-        return self.run_safely(
-            "add", error_code=400, pocket=pocket_name, **args)
+        return self.run_safely("add", pocket=pocket_name, **args)
 
 
 class EntryResource(LogResource):
     def get(self, pocket_name, table_name, eid):
         return self.run_safely(
-            "get",
-            error_code=404,
-            pocket=pocket_name,
-            table_name=table_name,
-            eid=eid)
+            "get", pocket=pocket_name, table_name=table_name, eid=eid)
 
     def delete(self, pocket_name, table_name, eid):
         return self.run_safely(
-            "remove",
-            error_code=404,
-            pocket=pocket_name,
-            table_name=table_name,
-            eid=eid)
+            "remove", pocket=pocket_name, table_name=table_name, eid=eid)
 
     def patch(self, pocket_name, table_name, eid):
         args = update_parser.parse_args()
         return self.run_safely(
             "update",
-            error_code=400,
             pocket=pocket_name,
             table_name=table_name,
             eid=eid,
@@ -118,4 +113,4 @@ class EntryResource(LogResource):
 class CopyResource(LogResource):
     def post(self):
         args = copy_parser.parse_args()
-        return self.run_safely("copy", error_code=404, **args)
+        return self.run_safely("copy", **args)
