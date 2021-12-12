@@ -1,5 +1,3 @@
-VERSION=$$(python setup.py --version)
-
 .PHONY: all test install release coverage lint format style-check
 
 all:
