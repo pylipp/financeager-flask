@@ -5,10 +5,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [unreleased]
 ### Added
+### Changed
+### Removed
+### Fixed
+
+## [v0.3.2.0 - 2021-12-12]
+### Added
 - Officially support Python 3.10.
 ### Changed
 - Use more modern packaging structure/methods.
-### Removed
 ### Fixed
 - Relax `financeager` dependency.
 
