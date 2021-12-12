@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [unreleased]
 ### Added
+- Officially support Python 3.10.
 ### Changed
 - Use more modern packaging structure/methods.
 ### Removed
