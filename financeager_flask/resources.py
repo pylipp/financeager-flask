@@ -5,6 +5,8 @@ import flask
 from financeager import exceptions, init_logger
 from flask_restful import Resource, reqparse
 
+from . import version
+
 logger = init_logger(__name__)
 
 copy_parser = reqparse.RequestParser()
@@ -114,3 +116,11 @@ class CopyResource(LogResource):
     def post(self):
         args = copy_parser.parse_args()
         return self.run_safely("copy", **args)
+
+
+class VersionResource(LogResource):
+    def get(self):
+        return {
+            "version": version(),
+            "financeager_version": version("financeager"),
+        }

@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [unreleased]
 ### Added
+- Provide `web-version` CLI command to query information about financeager software version installed on server (#2).
 ### Changed
 ### Removed
 ### Fixed

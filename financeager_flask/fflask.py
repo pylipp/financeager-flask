@@ -6,7 +6,7 @@ from financeager import (init_logger, make_log_stream_handler_verbose, server,
 from flask import Flask
 from flask_restful import Api
 
-from . import COPY_TAIL, POCKETS_TAIL, resources
+from . import COPY_TAIL, POCKETS_TAIL, VERSION_TAIL, resources
 
 logger = init_logger(__name__)
 
@@ -54,6 +54,8 @@ def create_app(data_dir=None, config=None):
         resources.PocketsResource, POCKETS_TAIL, resource_class_args=(srv,))
     api.add_resource(
         resources.CopyResource, COPY_TAIL, resource_class_args=(srv,))
+    api.add_resource(
+        resources.VersionResource, VERSION_TAIL, resource_class_args=(srv,))
     api.add_resource(
         resources.PocketResource,
         "{}/<pocket_name>".format(POCKETS_TAIL),

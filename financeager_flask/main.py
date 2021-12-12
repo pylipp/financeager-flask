@@ -21,6 +21,13 @@ class _Configuration(plugin.PluginConfiguration):
         }
 
 
+class _CliOptions(plugin.PluginCliOptions):
+    def extend(self, command_parser):
+        command_parser.add_parser(
+            "web-version",
+            help="information about financeager versions installed on server")
+
+
 class _Client(clients.Client):
     """Client for communicating with the financeager Flask webservice."""
 
@@ -68,4 +75,5 @@ def main():
         name="flask",
         client=_Client,
         config=_Configuration(),
+        cli_options=_CliOptions(),
     )

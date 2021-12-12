@@ -45,6 +45,10 @@ This specifies the timeout for HTTP requests and username/password for basic aut
 
 In any case, you're all set up! The available client CLI commands and options are the same as for the native program.
 
+### Command-line options
+
+The plugin provides the `fina web-version` command, yielding information about the `financeager` software version installed on the server.
+
 ### More Goodies
 
 - `financeager` will store requests if the server is not reachable (the timeout is configurable). The offline backup is restored the next time a connection is established.

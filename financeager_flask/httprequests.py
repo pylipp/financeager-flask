@@ -5,7 +5,11 @@ import json
 import requests
 from financeager import DEFAULT_POCKET_NAME, DEFAULT_TABLE, exceptions
 
-from . import COPY_TAIL, DEFAULT_HOST, POCKETS_TAIL
+from . import COPY_TAIL, DEFAULT_HOST, POCKETS_TAIL, VERSION_TAIL
+
+VERSION_MESSAGE = \
+    "The webserver runs financeager-flask {version}\n" +\
+    "               and financeager       {financeager_version}"
 
 
 class Proxy:
@@ -37,6 +41,7 @@ class Proxy:
         base_url = "{}{}".format(host, POCKETS_TAIL)
         pocket_url = "{}/{}".format(base_url, pocket)
         copy_url = "{}{}".format(host, COPY_TAIL)
+        version_url = "{}{}".format(host, VERSION_TAIL)
         eid_url = "{}/{}/{}".format(pocket_url,
                                     data.get("table_name") or DEFAULT_TABLE,
                                     data.get("eid"))
@@ -76,6 +81,9 @@ class Proxy:
         elif command == "update":
             url = eid_url
             function = requests.patch
+        elif command == "web-version":
+            url = version_url
+            function = requests.get
         else:
             raise ValueError("Unknown command: {}".format(command))
 
@@ -86,6 +94,8 @@ class Proxy:
                 "Error sending request: {}".format(e))
 
         if response.ok:
+            if command == "web-version":
+                return VERSION_MESSAGE.format(**response.json())
             return response.json()
         else:
             try:

@@ -10,7 +10,7 @@ from financeager import (DEFAULT_TABLE, cli, clients, config, entries,
 from requests import RequestException, Response
 from requests import get as requests_get
 
-from financeager_flask import fflask, main
+from financeager_flask import fflask, main, version
 
 TEST_CONFIG_FILEPATH = "/tmp/financeager-test-config"
 TEST_DATA_DIR = tempfile.mkdtemp(prefix="financeager-")
@@ -61,7 +61,7 @@ class CliTestCase(unittest.TestCase):
         command = args[0]
 
         # Exclude option from subcommand parsers that would be confused
-        if command not in ["copy", "pockets"]:
+        if command not in ["copy", "pockets", "web-version"]:
             args.extend(["--pocket", str(self.pocket)])
 
         args.extend(["--config-filepath", TEST_CONFIG_FILEPATH])
@@ -69,8 +69,8 @@ class CliTestCase(unittest.TestCase):
         sinks = clients.Client.Sinks(self.info, self.error)
 
         # Procedure similar to cli.main()
-        params = cli._parse_command(args)
         plugins = [main.main()]
+        params = cli._parse_command(args, plugins=plugins)
         configuration = config.Configuration(
             params.pop("config_filepath"), plugins=plugins)
         exit_code = cli.run(
@@ -336,6 +336,10 @@ host = http://{}
         self.assertEqual({"id": 1}, self.info.call_args_list[1][0][0])
         self.assertEqual("Recovered offline backup.",
                          self.info.call_args_list[2][0][0])
+
+    def test_web_version(self):
+        response = self.cli_run("web-version")
+        self.assertIn(version(), response)
 
 
 if __name__ == "__main__":
