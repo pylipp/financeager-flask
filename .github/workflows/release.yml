@@ -20,7 +20,8 @@ jobs:
         python-version: '3.x'
     - name: Install dependencies
       run: |
-        pip install -U .[develop]
+        pip install -U pip
+        pip install -U .[packaging]
     - name: Construct release body
       id: construct
       run: |
@@ -43,5 +44,5 @@ jobs:
         TWINE_USERNAME: ${{ secrets.PYPI_USERNAME }}
         TWINE_PASSWORD: ${{ secrets.PYPI_PASSWORD }}
       run: |
-        python setup.py bdist_wheel --universal
+        python -m build
         twine upload dist/*
