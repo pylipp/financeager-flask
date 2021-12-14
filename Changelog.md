@@ -5,10 +5,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [unreleased]
 ### Added
-- Provide `web-version` CLI command to query information about financeager software version installed on server (#2).
 ### Changed
 ### Removed
 ### Fixed
+
+## [v0.3.3.0 - 2021-12-14]
+### Added
+- Provide `web-version` CLI command to query information about financeager software version installed on server (#2).
+### Changed
+- The upstream `financeager` dependency is required as v0.26.2.0 or higher.
 
 ## [v0.3.2.0 - 2021-12-12]
 ### Added
