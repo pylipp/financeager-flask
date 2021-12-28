@@ -5,10 +5,13 @@ from financeager import plugin
 
 from . import DEFAULT_HOST, DEFAULT_TIMEOUT, exceptions, httprequests, offline
 
+SERVICE_NAME = "flask"
+CONFIG_SECTION_NAME = "SERVICE:{}".format(SERVICE_NAME.upper())
+
 
 class _Configuration(plugin.PluginConfiguration):
     def init_defaults(self, config_parser):
-        config_parser["SERVICE:FLASK"] = {
+        config_parser[CONFIG_SECTION_NAME] = {
             "host": DEFAULT_HOST,
             "timeout": DEFAULT_TIMEOUT,
             "username": "",
@@ -16,7 +19,7 @@ class _Configuration(plugin.PluginConfiguration):
         }
 
     def init_option_types(self, option_types):
-        option_types["SERVICE:FLASK"] = {
+        option_types[CONFIG_SECTION_NAME] = {
             "timeout": "int",
         }
 
@@ -25,7 +28,8 @@ class _CliOptions(plugin.PluginCliOptions):
     def extend(self, command_parser):
         command_parser.add_parser(
             "web-version",
-            help="information about financeager versions installed on server")
+            help="information about financeager versions installed on server "
+            "(only if configured with service name '{}')".format(SERVICE_NAME))
 
 
 class _Client(clients.Client):
@@ -35,7 +39,7 @@ class _Client(clients.Client):
         """Set up proxy and urllib3 logger."""
         super().__init__(configuration=configuration, sinks=sinks)
         self.proxy = httprequests.Proxy(
-            http_config=configuration.get_section("SERVICE:FLASK"))
+            http_config=configuration.get_section(CONFIG_SECTION_NAME))
 
         financeager.init_logger("urllib3")
 
@@ -72,7 +76,7 @@ class _Client(clients.Client):
 
 def main():
     return plugin.ServicePlugin(
-        name="flask",
+        name=SERVICE_NAME,
         client=_Client,
         config=_Configuration(),
         cli_options=_CliOptions(),

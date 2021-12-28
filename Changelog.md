@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [v0.3.4.0 - 2021-12-28]
 ### Changed
 - The upstream `financeager` dependency is required as lower than v0.26.3.0.
+- Extend CLI help for `web-version` command.
 
 ## [v0.3.3.0 - 2021-12-14]
 ### Added
