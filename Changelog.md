@@ -9,6 +9,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Removed
 ### Fixed
 
+## [v0.3.4.1 - 2021-12-30]
+### Fixed
+- Correctly generate release notes when running Github release action.
+
 ## [v0.3.4.0 - 2021-12-28]
 ### Changed
 - The upstream `financeager` dependency is required as lower than v0.26.3.0.
