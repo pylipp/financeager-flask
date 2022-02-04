@@ -16,7 +16,7 @@ release:
 
 coverage:
 	coverage erase
-	coverage run --source financeager_flask -m unittest
+	coverage run -m unittest
 	coverage report
 	coverage html
 

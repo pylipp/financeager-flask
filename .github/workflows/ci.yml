@@ -51,7 +51,7 @@ jobs:
         uses: pre-commit/action@v2.0.0
       - name: Run test suite
         run: |
-          coverage run --source financeager_flask -m unittest
+          coverage run -m unittest
       - name: Upload coverage result
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
