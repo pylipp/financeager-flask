@@ -6,8 +6,14 @@ from collections import defaultdict
 from threading import Thread
 from unittest import mock
 
-from financeager import (DEFAULT_TABLE, RECURRENT_TABLE, cli, clients, config,
-                         setup_log_file_handler)
+from financeager import (
+    DEFAULT_TABLE,
+    RECURRENT_TABLE,
+    cli,
+    clients,
+    config,
+    setup_log_file_handler,
+)
 from requests import RequestException, Response
 from requests import get as requests_get
 
@@ -73,16 +79,19 @@ class CliTestCase(unittest.TestCase):
         plugins = [main.main()]
         params = cli._parse_command(args, plugins=plugins)
         configuration = config.Configuration(
-            params.pop("config_filepath"), plugins=plugins)
+            params.pop("config_filepath"), plugins=plugins
+        )
         exit_code = cli.run(
-            sinks=sinks, configuration=configuration, plugins=plugins, **params)
+            sinks=sinks, configuration=configuration, plugins=plugins, **params
+        )
 
         # Get first of the args of the call of specified log method
         response = getattr(self, log_method).call_args[0][0]
 
         # Verify exit code
-        self.assertEqual(exit_code,
-                         cli.SUCCESS if log_method == "info" else cli.FAILURE)
+        self.assertEqual(
+            exit_code, cli.SUCCESS if log_method == "info" else cli.FAILURE
+        )
 
         # Immediately return str messages
         if isinstance(response, str):
@@ -100,7 +109,8 @@ class CliTestCase(unittest.TestCase):
                 response,
                 command,
                 default_category=configuration.get_option(
-                    "FRONTEND", "default_category"),
+                    "FRONTEND", "default_category"
+                ),
                 recurrent_only=params.get("recurrent_only", False),
             )
 
@@ -124,24 +134,29 @@ date_format = %%m-%%d
 
 [SERVICE:FLASK]
 host = http://{}
-""".format(HOST_IP)
+""".format(
+        HOST_IP
+    )
 
     @staticmethod
     def launch_server():
         # Patch DATA_DIR inside the thread to avoid having it
         # created/interfering with logs on actual machine
         import financeager
+
         financeager.DATA_DIR = TEST_DATA_DIR
         app = fflask.create_app(
             data_dir=TEST_DATA_DIR,
             config={
                 "DEBUG": False,  # reloader can only be run in main thread
                 "SERVER_NAME": CliFlaskTestCase.HOST_IP,
-            })
+            },
+        )
 
         def shutdown():
             from flask import request
-            app._server.run('stop')
+
+            app._server.run("stop")
             request.environ.get("werkzeug.server.shutdown")()
             return ""
 
@@ -187,21 +202,18 @@ host = http://{}
         self.cli_run("remove {}", format_args=entry_id)
 
         response = self.cli_run("list")["elements"]
-        self.assertEqual(response, {
-            DEFAULT_TABLE: {},
-            RECURRENT_TABLE: defaultdict(list)
-        })
+        self.assertEqual(
+            response, {DEFAULT_TABLE: {}, RECURRENT_TABLE: defaultdict(list)}
+        )
 
     def test_add_invalid_entry_table_name(self):
-        response = self.cli_run(
-            "add stuff 11.11 -t unknown", log_method="error")
+        response = self.cli_run("add stuff 11.11 -t unknown", log_method="error")
         self.assertIn("400", response)
 
     def test_update(self):
         entry_id = self.cli_run("add donuts -50 -c sweets")
 
-        update_entry_id = self.cli_run(
-            "update {} -n bretzels", format_args=entry_id)
+        update_entry_id = self.cli_run("update {} -n bretzels", format_args=entry_id)
         self.assertEqual(entry_id, update_entry_id)
 
         response = self.cli_run("get {}", format_args=entry_id)
@@ -220,29 +232,29 @@ host = http://{}
         self.assertIn("404", response)
 
     def test_recurrent_entry(self):
-        entry_id = self.cli_run("add cookies -10 -c food -t recurrent -f "
-                                "half-yearly -s 2020-01-01 -e 2020-12-31")
+        entry_id = self.cli_run(
+            "add cookies -10 -c food -t recurrent -f "
+            "half-yearly -s 2020-01-01 -e 2020-12-31"
+        )
         self.assertEqual(entry_id, 1)
 
         response = self.cli_run("get {} -t recurrent", format_args=entry_id)
         self.assertIn("Half-Yearly", response)
 
         update_entry_id = self.cli_run(
-            "update {} -t recurrent -n clifbars -f quarter-yearly",
-            format_args=entry_id)
+            "update {} -t recurrent -n clifbars -f quarter-yearly", format_args=entry_id
+        )
         self.assertEqual(update_entry_id, entry_id)
 
         response = self.cli_run("list")["elements"]
-        self.assertEqual(
-            len(response[RECURRENT_TABLE][str(update_entry_id)]), 4)
+        self.assertEqual(len(response[RECURRENT_TABLE][str(update_entry_id)]), 4)
 
         self.cli_run("remove {} -t recurrent", format_args=entry_id)
 
         response = self.cli_run("list")["elements"]
-        self.assertEqual(response, {
-            DEFAULT_TABLE: {},
-            RECURRENT_TABLE: defaultdict(list)
-        })
+        self.assertEqual(
+            response, {DEFAULT_TABLE: {}, RECURRENT_TABLE: defaultdict(list)}
+        )
 
     def test_copy(self):
         destination_pocket = self.pocket + 1
@@ -252,21 +264,23 @@ host = http://{}
 
         destination_entry_id = self.cli_run(
             "copy {} -s {} -d {}",
-            format_args=(source_entry_id, self.pocket, destination_pocket))
+            format_args=(source_entry_id, self.pocket, destination_pocket),
+        )
 
         # Swap pocket to trick cli_run()
         self.pocket, destination_pocket = destination_pocket, self.pocket
         destination_printed_content = self.cli_run(
-            "get {}", format_args=destination_entry_id).splitlines()
+            "get {}", format_args=destination_entry_id
+        ).splitlines()
         self.pocket, destination_pocket = destination_pocket, self.pocket
 
         source_printed_content = self.cli_run(
-            "get {}", format_args=source_entry_id).splitlines()
+            "get {}", format_args=source_entry_id
+        ).splitlines()
         # Remove date lines
         destination_printed_content.remove(destination_printed_content[2])
         source_printed_content.remove(source_printed_content[2])
-        self.assertListEqual(destination_printed_content,
-                             source_printed_content)
+        self.assertListEqual(destination_printed_content, source_printed_content)
 
     def test_copy_nonexisting_entry(self):
         destination_pocket = self.pocket + 1
@@ -275,7 +289,8 @@ host = http://{}
         response = self.cli_run(
             "copy 0 -s {} -d {}",
             log_method="error",
-            format_args=(self.pocket, destination_pocket))
+            format_args=(self.pocket, destination_pocket),
+        )
         self.assertIn("404", response)
 
     def test_communication_error(self):
@@ -286,8 +301,10 @@ host = http://{}
             response = self.cli_run("list", log_method="error")
             self.assertIn("500", response)
 
-    @mock.patch("financeager_flask.offline.OFFLINE_FILEPATH",
-                os.path.join(TEST_DATA_DIR, "financeager-test-offline.json"))
+    @mock.patch(
+        "financeager_flask.offline.OFFLINE_FILEPATH",
+        os.path.join(TEST_DATA_DIR, "financeager-test-offline.json"),
+    )
     def test_offline_feature(self):
         with mock.patch("requests.post") as mocked_post:
             # Try do add an item but provoke CommunicationError
@@ -296,37 +313,41 @@ host = http://{}
             self.cli_run("add veggies -33", log_method="error")
 
             # Output from caught CommunicationError
-            self.assertEqual("Error sending request: did not work",
-                             str(self.error.call_args_list[0][0][0]))
-            self.assertEqual("Stored 'add' request in offline backup.",
-                             self.info.call_args_list[0][0][0])
+            self.assertEqual(
+                "Error sending request: did not work",
+                str(self.error.call_args_list[0][0][0]),
+            )
+            self.assertEqual(
+                "Stored 'add' request in offline backup.",
+                self.info.call_args_list[0][0][0],
+            )
 
             # Now request a print, and try to recover the offline backup
             # But adding is still expected to fail
             mocked_post.side_effect = RequestException("still no works")
             self.cli_run("list", log_method="error")
             # Output from print; expect empty database
-            self.assertEqual({"elements": {
-                DEFAULT_TABLE: {},
-                "recurrent": {}
-            }}, self.info.call_args_list[0][0][0])
+            self.assertEqual(
+                {"elements": {DEFAULT_TABLE: {}, "recurrent": {}}},
+                self.info.call_args_list[0][0][0],
+            )
 
             # Output from cli module
-            self.assertEqual("Offline backup recovery failed!",
-                             self.error.call_args_list[-1][0][0])
+            self.assertEqual(
+                "Offline backup recovery failed!", self.error.call_args_list[-1][0][0]
+            )
 
         # Without side effects, recover the offline backup
         self.cli_run("list")
 
         # Output from list command
-        self.assertEqual({"elements": {
-            DEFAULT_TABLE: {},
-            "recurrent": {}
-        }}, self.info.call_args_list[0][0][0])
+        self.assertEqual(
+            {"elements": {DEFAULT_TABLE: {}, "recurrent": {}}},
+            self.info.call_args_list[0][0][0],
+        )
         # Output from recovered add command
         self.assertEqual({"id": 1}, self.info.call_args_list[1][0][0])
-        self.assertEqual("Recovered offline backup.",
-                         self.info.call_args_list[2][0][0])
+        self.assertEqual("Recovered offline backup.", self.info.call_args_list[2][0][0])
 
     def test_web_version(self):
         response = self.cli_run("web-version")

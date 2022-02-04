@@ -10,13 +10,11 @@ from . import utils
 class AddTestCase(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
-        cls.filepath = os.path.join(
-            os.path.expanduser("~"), "offline_test.json")
+        cls.filepath = os.path.join(os.path.expanduser("~"), "offline_test.json")
 
     def test_add_recover(self):
         pocket_name = "123"
-        kwargs = dict(
-            name="money", value=111, date="2019-01-31", pocket=pocket_name)
+        kwargs = dict(name="money", value=111, date="2019-01-31", pocket=pocket_name)
         self.assertTrue(add("add", offline_filepath=self.filepath, **kwargs))
 
         content = _load(self.filepath)
@@ -59,7 +57,8 @@ class AddTestCase(unittest.TestCase):
             exceptions.OfflineRecoveryError,
             recover,
             client,
-            offline_filepath=self.filepath)
+            offline_filepath=self.filepath,
+        )
 
         content = _load(self.filepath)
         kwargs["command"] = command

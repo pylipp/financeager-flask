@@ -29,7 +29,8 @@ class _CliOptions(plugin.PluginCliOptions):
         command_parser.add_parser(
             "web-version",
             help="information about financeager versions installed on server "
-            "(only if configured with service name '{}')".format(SERVICE_NAME))
+            "(only if configured with service name '{}')".format(SERVICE_NAME),
+        )
 
 
 class _Client(clients.Client):
@@ -39,7 +40,8 @@ class _Client(clients.Client):
         """Set up proxy and urllib3 logger."""
         super().__init__(configuration=configuration, sinks=sinks)
         self.proxy = httprequests.Proxy(
-            http_config=configuration.get_section(CONFIG_SECTION_NAME))
+            http_config=configuration.get_section(CONFIG_SECTION_NAME)
+        )
 
         financeager.init_logger("urllib3")
 
@@ -64,12 +66,12 @@ class _Client(clients.Client):
                 success = False
 
         # If request was erroneous, it's not supposed to be stored offline
-        if not isinstance(
-                self.latest_exception, base_exceptions.InvalidRequest) and\
-                self.latest_exception is not None and\
-                offline.add(command, **params):
-            self.sinks.info(
-                "Stored '{}' request in offline backup.".format(command))
+        if (
+            not isinstance(self.latest_exception, base_exceptions.InvalidRequest)
+            and self.latest_exception is not None
+            and offline.add(command, **params)
+        ):
+            self.sinks.info("Stored '{}' request in offline backup.".format(command))
 
         return success
 

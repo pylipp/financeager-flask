@@ -23,15 +23,17 @@ class HttpRequestProxyTestCase(unittest.TestCase):
         username = "noob"
         password = 123456
         timeout = 1
-        proxy = HttpProxy(http_config={
-            "username": username,
-            "password": password,
-            "timeout": timeout,
-        })
+        proxy = HttpProxy(
+            http_config={
+                "username": username,
+                "password": password,
+                "timeout": timeout,
+            }
+        )
 
         with patch(
-                "financeager_flask.httprequests.requests.post",
-                side_effect=self.mock_post) as post_patch:
+            "financeager_flask.httprequests.requests.post", side_effect=self.mock_post
+        ) as post_patch:
 
             proxy.run("pockets")
 

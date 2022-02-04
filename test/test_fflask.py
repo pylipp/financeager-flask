@@ -21,7 +21,8 @@ class CreateAppNoDataDirTestCase(unittest.TestCase):
             "'data_dir' not given. Application data is stored in "
             "memory and is lost when the flask app terminates. Set "
             "the environment variable FINANCEAGER_FLASK_DATA_DIR "
-            "accordingly for persistent data storage.")
+            "accordingly for persistent data storage."
+        )
 
     def test_debug(self):
         app = create_app(config={"DEBUG": True})

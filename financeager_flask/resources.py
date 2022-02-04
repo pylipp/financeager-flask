@@ -75,7 +75,8 @@ class LogResource(Resource):
         """Log content of request that is about to be dispatched."""
         logger.debug(
             "Dispatching {r} holding {{data: {r.data}, "
-            "values: {r.values}, json: {r.json}}}".format(r=flask.request))
+            "values: {r.values}, json: {r.json}}}".format(r=flask.request)
+        )
         return super().dispatch_request(*args, **kwargs)
 
 
@@ -97,20 +98,19 @@ class PocketResource(LogResource):
 class EntryResource(LogResource):
     def get(self, pocket_name, table_name, eid):
         return self.run_safely(
-            "get", pocket=pocket_name, table_name=table_name, eid=eid)
+            "get", pocket=pocket_name, table_name=table_name, eid=eid
+        )
 
     def delete(self, pocket_name, table_name, eid):
         return self.run_safely(
-            "remove", pocket=pocket_name, table_name=table_name, eid=eid)
+            "remove", pocket=pocket_name, table_name=table_name, eid=eid
+        )
 
     def patch(self, pocket_name, table_name, eid):
         args = update_parser.parse_args()
         return self.run_safely(
-            "update",
-            pocket=pocket_name,
-            table_name=table_name,
-            eid=eid,
-            **args)
+            "update", pocket=pocket_name, table_name=table_name, eid=eid, **args
+        )
 
 
 class CopyResource(LogResource):

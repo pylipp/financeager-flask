@@ -9,7 +9,7 @@ import sys
 from financeager_flask import DATA_DIR
 from financeager_flask.fflask import create_app
 
-path = os.path.expanduser('~/financeager-flask/financeager_flask/fflask.py')
+path = os.path.expanduser("~/financeager-flask/financeager_flask/fflask.py")
 if path not in sys.path:
     sys.path.append(path)
 

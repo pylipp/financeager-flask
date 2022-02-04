@@ -13,7 +13,7 @@ class Client(clients.LocalServerClient):
     def __init__(self):
         f = lambda s: None
         super().__init__(
-            configuration=main._Configuration(),
-            sinks=clients.Client.Sinks(f, f))
+            configuration=main._Configuration(), sinks=clients.Client.Sinks(f, f)
+        )
 
         self.proxy._pocket_kwargs["data_dir"] = None

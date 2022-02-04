@@ -7,9 +7,10 @@ from financeager import DEFAULT_POCKET_NAME, DEFAULT_TABLE, exceptions
 
 from . import COPY_TAIL, DEFAULT_HOST, POCKETS_TAIL, VERSION_TAIL
 
-VERSION_MESSAGE = \
-    "The webserver runs financeager-flask {version}\n" +\
-    "               and financeager       {financeager_version}"
+VERSION_MESSAGE = (
+    "The webserver runs financeager-flask {version}\n"
+    + "               and financeager       {financeager_version}"
+)
 
 
 class Proxy:
@@ -42,9 +43,9 @@ class Proxy:
         pocket_url = "{}/{}".format(base_url, pocket)
         copy_url = "{}{}".format(host, COPY_TAIL)
         version_url = "{}{}".format(host, VERSION_TAIL)
-        eid_url = "{}/{}/{}".format(pocket_url,
-                                    data.get("table_name") or DEFAULT_TABLE,
-                                    data.get("eid"))
+        eid_url = "{}/{}/{}".format(
+            pocket_url, data.get("table_name") or DEFAULT_TABLE, data.get("eid")
+        )
 
         username = self.http_config.get("username")
         password = self.http_config.get("password")
@@ -90,8 +91,7 @@ class Proxy:
         try:
             response = function(url, **kwargs)
         except requests.RequestException as e:
-            raise exceptions.CommunicationError(
-                "Error sending request: {}".format(e))
+            raise exceptions.CommunicationError("Error sending request: {}".format(e))
 
         if response.ok:
             if command == "web-version":
@@ -110,8 +110,11 @@ class Proxy:
             else:
                 error_class = exceptions.CommunicationError
 
-            message = "Error handling request. " +\
-                "Server returned '{} ({}): {}'".format(
-                    http.HTTPStatus(status_code).phrase, status_code, error)
+            message = (
+                "Error handling request. "
+                + "Server returned '{} ({}): {}'".format(
+                    http.HTTPStatus(status_code).phrase, status_code, error
+                )
+            )
 
             raise error_class(message)
