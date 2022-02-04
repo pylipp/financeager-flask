@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - Support `--recurrent-only` option for `fina list` command.
 ### Changed
+- The upstream `financeager` dependency is required as v1.0.1 or higher.
 ### Removed
 ### Fixed
 

@@ -2,11 +2,12 @@ import os
 import tempfile
 import time
 import unittest
+from collections import defaultdict
 from threading import Thread
 from unittest import mock
 
-from financeager import (DEFAULT_TABLE, cli, clients, config, entries,
-                         setup_log_file_handler)
+from financeager import (DEFAULT_TABLE, RECURRENT_TABLE, cli, clients, config,
+                         entries, setup_log_file_handler)
 from requests import RequestException, Response
 from requests import get as requests_get
 
@@ -94,7 +95,7 @@ class CliTestCase(unittest.TestCase):
         if command in ["add", "update", "remove", "copy"]:
             return response["id"]
 
-        if command in ["get", "list", "pockets"] and log_method == "info":
+        if command in ["get", "pockets"] and log_method == "info":
             return cli._format_response(
                 response,
                 command,
@@ -102,6 +103,9 @@ class CliTestCase(unittest.TestCase):
                     "FRONTEND", "default_category"),
                 recurrent_only=params.get("recurrent_only", False),
             )
+
+        if command == "list" and log_method == "info":
+            return response
 
         return response
 
@@ -164,8 +168,8 @@ host = http://{}
     def test_add_list_remove(self):
         entry_id = self.cli_run("add cookies -100")
 
-        response = self.cli_run("list")
-        self.assertIn(entries.CategoryEntry.DEFAULT_NAME, response.lower())
+        response = self.cli_run("list")["elements"]
+        self.assertIsNone(response[DEFAULT_TABLE][str(entry_id)]["category"])
 
         remove_entry_id = self.cli_run("remove {}", format_args=entry_id)
         self.assertEqual(remove_entry_id, entry_id)
@@ -182,8 +186,11 @@ host = http://{}
 
         self.cli_run("remove {}", format_args=entry_id)
 
-        response = self.cli_run("list")
-        self.assertEqual(response, "")
+        response = self.cli_run("list")["elements"]
+        self.assertEqual(response, {
+            DEFAULT_TABLE: {},
+            RECURRENT_TABLE: defaultdict(list)
+        })
 
     def test_add_invalid_entry_table_name(self):
         response = self.cli_run(
@@ -225,15 +232,17 @@ host = http://{}
             format_args=entry_id)
         self.assertEqual(update_entry_id, entry_id)
 
-        response = self.cli_run("list")
-        self.assertEqual(response.count("Clifbars"), 4)
-        self.assertEqual(response.count("{}\n".format(entry_id)), 4)
-        self.assertEqual(len(response.splitlines()), 10)
+        response = self.cli_run("list")["elements"]
+        self.assertEqual(
+            len(response[RECURRENT_TABLE][str(update_entry_id)]), 4)
 
         self.cli_run("remove {} -t recurrent", format_args=entry_id)
 
-        response = self.cli_run("list")
-        self.assertEqual(response, "")
+        response = self.cli_run("list")["elements"]
+        self.assertEqual(response, {
+            DEFAULT_TABLE: {},
+            RECURRENT_TABLE: defaultdict(list)
+        })
 
     def test_copy(self):
         destination_pocket = self.pocket + 1
@@ -268,26 +277,6 @@ host = http://{}
             log_method="error",
             format_args=(self.pocket, destination_pocket))
         self.assertIn("404", response)
-
-    def test_default_category(self):
-        entry_id = self.cli_run("add car -9999")
-
-        # Default category is converted for frontend display
-        response = self.cli_run("list")
-        self.assertIn(entries.CategoryEntry.DEFAULT_NAME, response.lower())
-
-        # Category field is converted to 'None' and filtered for
-        response = self.cli_run("list --filters category=unspecified")
-        self.assertIn(entries.CategoryEntry.DEFAULT_NAME, response.lower())
-
-        # The pattern is used for regex filtering; nothing is found
-        response = self.cli_run("list --filters category=lel")
-        self.assertEqual(response, "")
-
-        # Default category is converted for frontend display
-        response = self.cli_run("get {}", format_args=entry_id)
-        self.assertEqual(response.splitlines()[-1].split()[1].lower(),
-                         entries.CategoryEntry.DEFAULT_NAME)
 
     def test_communication_error(self):
         with mock.patch("requests.get") as mocked_get:
@@ -346,8 +335,8 @@ host = http://{}
     def test_list_recurrent_only(self):
         entry_id = self.cli_run("add rent -500 -f monthly")
         response = self.cli_run("list --recurrent-only")
-        self.assertIn("Rent", response)
-        self.assertIn("Monthly", response)
+        self.assertEqual(response["elements"][0]["name"], "rent")
+        self.assertEqual(response["elements"][0]["frequency"], "monthly")
 
 
 if __name__ == "__main__":
