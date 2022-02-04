@@ -7,7 +7,7 @@ from threading import Thread
 from unittest import mock
 
 from financeager import (DEFAULT_TABLE, RECURRENT_TABLE, cli, clients, config,
-                         entries, setup_log_file_handler)
+                         setup_log_file_handler)
 from requests import RequestException, Response
 from requests import get as requests_get
 
@@ -333,7 +333,7 @@ host = http://{}
         self.assertIn(version(), response)
 
     def test_list_recurrent_only(self):
-        entry_id = self.cli_run("add rent -500 -f monthly")
+        self.cli_run("add rent -500 -f monthly")
         response = self.cli_run("list --recurrent-only")
         self.assertEqual(response["elements"][0]["name"], "rent")
         self.assertEqual(response["elements"][0]["frequency"], "monthly")
