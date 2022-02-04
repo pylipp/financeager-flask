@@ -99,7 +99,9 @@ class CliTestCase(unittest.TestCase):
                 response,
                 command,
                 default_category=configuration.get_option(
-                    "FRONTEND", "default_category"))
+                    "FRONTEND", "default_category"),
+                recurrent_only=params.get("recurrent_only", False),
+            )
 
         return response
 
@@ -340,6 +342,12 @@ host = http://{}
     def test_web_version(self):
         response = self.cli_run("web-version")
         self.assertIn(version(), response)
+
+    def test_list_recurrent_only(self):
+        entry_id = self.cli_run("add rent -500 -f monthly")
+        response = self.cli_run("list --recurrent-only")
+        self.assertIn("Rent", response)
+        self.assertIn("Monthly", response)
 
 
 if __name__ == "__main__":

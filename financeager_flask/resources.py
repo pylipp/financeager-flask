@@ -27,6 +27,7 @@ put_parser.add_argument("table_name")
 
 print_parser = reqparse.RequestParser()
 print_parser.add_argument("filters")
+print_parser.add_argument("recurrent_only", type=bool)
 
 update_parser = reqparse.RequestParser()
 update_parser.add_argument("name")
