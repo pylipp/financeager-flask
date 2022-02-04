@@ -26,7 +26,5 @@ lint:
 format:
 	pre-commit run --all-files black
 	pre-commit run --all-files isort
-	pre-commit run --all-files end-of-file-fixer
-	pre-commit run --all-files trailing-whitespace
 
 style-check: format lint
