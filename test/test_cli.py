@@ -17,7 +17,7 @@ from financeager import (
 from requests import RequestException, Response
 from requests import get as requests_get
 
-from financeager_flask import fflask, main, version
+from financeager_flask import flask, main, version
 
 TEST_CONFIG_FILEPATH = "/tmp/financeager-test-config"
 TEST_DATA_DIR = tempfile.mkdtemp(prefix="financeager-")
@@ -145,7 +145,7 @@ host = http://{}
         import financeager
 
         financeager.DATA_DIR = TEST_DATA_DIR
-        app = fflask.create_app(
+        app = flask.create_app(
             data_dir=TEST_DATA_DIR,
             config={
                 "DEBUG": False,  # reloader can only be run in main thread

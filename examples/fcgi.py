@@ -40,11 +40,11 @@ https://wiki.uberspace.de/webserver:htaccess#verzeichnisschutz
 """
 from flipflop import WSGIServer
 
-from financeager_flask import DATA_DIR, fflask
+from financeager_flask import DATA_DIR, flask
 
 if __name__ == "__main__":
     # Configure to your liking
-    app = fflask.create_app(
+    app = flask.create_app(
         data_dir=DATA_DIR,
         # config={"DEBUG": True},
     )

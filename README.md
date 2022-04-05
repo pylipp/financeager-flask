@@ -20,12 +20,12 @@ Installation via [`pipx`](https://pipxproject.github.io/pipx/) is recommended:
 
 To run `financeager` as client-server application, start the flask webservice by
 
-    export FLASK_APP=financeager_flask.fflask
+    export FLASK_APP=financeager_flask.flask
     flask run  # --help for more info
 
 >   This does not store data persistently! Specify the environment variable `FINANCEAGER_FLASK_DATA_DIR`.
 
->   For production use, you should wrap `app = fflask.create_app(data_dir=...)` in a WSGI or FCGI (see `examples/` directory).
+>   For production use, you should wrap `app = flask.create_app(data_dir=...)` in a WSGI or FCGI (see `examples/` directory).
 
 To communicate with the webservice, the `financeager` configuration has to be adjusted. Create and open the file `~/.config/financeager/config`. If you're on the machine that runs the webservice, put the lines
 
@@ -84,7 +84,7 @@ The following diagram sketches the relationship between financeager's modules, a
     +--------------+   |   |              |
     ================   |   |              |    ==========
     +--------------+   |   | localserver  |
-    |    fflask    |   |   |              |     BACKEND
+    |     flask    |   |   |              |     BACKEND
     +--------------+   |   |              |
     |  resources   |   |   |              |
     +--------------+   |   +--------------+

@@ -9,6 +9,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Removed
 ### Fixed
 
+## [v0.5.0.0] - 
+### Added
+- Rename `fflask` module to `flask`, adjust WSGI/FCGI scripts accordingly.
+
 ## [v0.4.0.0] - 2022-02-04
 ### Added
 - Support `--recurrent-only` option for `fina list` command.

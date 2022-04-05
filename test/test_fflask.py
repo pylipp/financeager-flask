@@ -5,7 +5,7 @@ from unittest import mock
 
 import financeager
 
-from financeager_flask.fflask import create_app
+from financeager_flask.flask import create_app
 
 # Patch DATA_DIR to avoid having it created/interfering with logs on actual
 # machine
@@ -14,7 +14,7 @@ TEST_DATA_DIR = tempfile.mkdtemp(prefix="financeager-")
 
 @mock.patch("financeager.DATA_DIR", TEST_DATA_DIR)
 class CreateAppNoDataDirTestCase(unittest.TestCase):
-    @mock.patch("financeager_flask.fflask.logger.warning")
+    @mock.patch("financeager_flask.flask.logger.warning")
     def test_warning(self, mocked_warning):
         create_app()
         mocked_warning.assert_called_once_with(
