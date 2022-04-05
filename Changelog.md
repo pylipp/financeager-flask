@@ -12,6 +12,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [v0.5.0.0] - 
 ### Added
 - Rename `fflask` module to `flask`, adjust WSGI/FCGI scripts accordingly.
+### Deprecated
+- Python 3.6 support will be removed in v1.0.0.
 
 ## [v0.4.0.0] - 2022-02-04
 ### Added
