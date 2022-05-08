@@ -9,9 +9,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Removed
 ### Fixed
 
-## [v0.5.0.0] - 
+## [v0.5.0.0] - 2022-05-08
 ### Added
 - Rename `fflask` module to `flask`, adjust WSGI/FCGI scripts accordingly.
+### Changed
+- The upstream `financeager` dependency is required as lower than v1.1.0.
 ### Deprecated
 - Python 3.6 support will be removed in v1.0.0.
 
