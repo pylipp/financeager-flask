@@ -9,6 +9,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Removed
 ### Fixed
 
+## [v1.0.0] - 2022-
+### Removed
+- Support for Python 3.6 is removed.
+
 ## [v0.5.0.0] - 2022-05-08
 ### Added
 - Rename `fflask` module to `flask`, adjust WSGI/FCGI scripts accordingly.
