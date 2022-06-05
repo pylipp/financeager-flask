@@ -12,6 +12,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## [v1.0.0] - 2022-
 ### Removed
 - Support for Python 3.6 is removed.
+### Changed
+- The upstream `financeager` dependency is required as lower than v1.2.0.
 
 ## [v0.5.0.0] - 2022-05-08
 ### Added
