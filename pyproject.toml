@@ -1,5 +1,104 @@
 [build-system]
-requires = ["setuptools>=45", "wheel", "setuptools_scm>=6.2"]
 build-backend = "setuptools.build_meta"
+requires = [
+  "setuptools>=64",
+  "setuptools_scm[toml]>=6.2",
+  "wheel",
+]
+
+[project]
+name = "financeager-flask"
+description = "Plugin to use flask as backend for financeager"
+readme = "README.md"
+keywords = [
+  "commandline",
+  "finances",
+]
+license = {text = "GPLv3"}
+authors = [{ name = "Philipp Metzner", email = "beth.aleph@yahoo.de" }]
+dependencies = [
+  "financeager>=1.1.0,<1.2.0",
+  "Flask>=1.0.2",
+  "Flask-RESTful>=0.3.5",
+  "requests>=2.20.0",
+  'importlib-metadata>=1.7.0;python_version<"3.8"',
+]
+dynamic = [
+  "version",
+]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Environment :: Console",
+  "Intended Audience :: End Users/Desktop",
+  "Intended Audience :: Other Audience",
+  "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+  "Operating System :: Unix",
+  "Programming Language :: Python :: 3.7",
+  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Topic :: Office/Business :: Financial",
+  "Topic :: Database",
+  "Topic :: Utilities",
+]
+[project.optional-dependencies]
+develop = [
+  "black==22.8",
+  "coverage==6.5",
+  "gitlint-core==0.17",
+  "isort==5.10.1",
+  "pre-commit==2.20",
+  'pyproject-flake8==5.0.4; python_version >= "3.8"',
+  'pyproject-flake8==5.0.4.post1; python_version < "3.8"',
+]
+packaging = [
+  "build",
+  "twine>=1.11",
+]
+
+[project.urls]
+"Bug Tracker" = "https://github.com/pylipp/financeager-flask/issues"
+Documentation = "https://github.com/pylipp/financeager-flask"
+Homepage = "https://github.com/pylipp/financeager-flask"
+"Source Code" = "https://github.com/pylipp/financeager-flask"
+
+[project.entry-points."financeager.services"]
+flask = "financeager_flask.main:main"
+
+
+[tool.setuptools]
+include-package-data = false
+
+[tool.setuptools.packages.find]
+exclude = ["test"]
+namespaces = false
+
+[tool.coverage.run]
+branch = true
+source = ["financeager_flask"]
+
+[tool.coverage.report]
+exclude_lines = [
+  "pragma: no cover",
+  "if __name__ == .__main__.:",
+  "except Exception:",
+  "def .*main()",
+]
 
 [tool.setuptools_scm]
+
+[tool.isort]
+profile = "black"
+line_length = 88
+multi_line_output = 3
+include_trailing_comma = true
+ensure_newline_before_comments = true
+known_third_party = ["financeager","flask","flask_restful","flipflop","requests","setuptools"]
+
+[tool.flake8]
+max-line-length = 88
+extend-ignore = [
+  "E731",  # do not assign a lambda expression, use a def
+  "W503",  # line break before binary operator
+  "W504",  # line break after binary operator
+]
