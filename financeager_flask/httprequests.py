@@ -16,13 +16,14 @@ VERSION_MESSAGE = (
 class Proxy:
     """Proxy for communicating with webservice via HTTP."""
 
-    def __init__(self, http_config=None):
+    def __init__(self, http_config=None, interface=None):
         """Args:
         http_config (dict): HTTP configuration with fields 'host' (default:
             DEFAULT_HOST), 'timeout' (default: DEFAULT_TIMEOUT) and
             optionally 'username'/'password' (for basic auth)
         """
         self.http_config = http_config or {}
+        self.interface = interface or requests
 
     def run(self, command, **data):
         """Convert specified command and data into HTTP request, send it to
@@ -63,32 +64,33 @@ class Proxy:
 
         if command == "list":
             url = pocket_url
-            function = requests.get
+            method = "get"
         elif command == "remove":
             url = eid_url
-            function = requests.delete
+            method = "delete"
         elif command == "add":
             url = pocket_url
-            function = requests.post
+            method = "post"
         elif command == "pockets":
             url = base_url
-            function = requests.post
+            method = "post"
         elif command == "copy":
             url = copy_url
-            function = requests.post
+            method = "post"
         elif command == "get":
             url = eid_url
-            function = requests.get
+            method = "get"
         elif command == "update":
             url = eid_url
-            function = requests.patch
+            method = "patch"
         elif command == "web-version":
             url = version_url
-            function = requests.get
+            method = "get"
         else:
             raise ValueError("Unknown command: {}".format(command))
 
         try:
+            function = getattr(self.interface, method)
             response = function(url, **kwargs)
         except requests.RequestException as e:
             raise exceptions.CommunicationError("Error sending request: {}".format(e))
