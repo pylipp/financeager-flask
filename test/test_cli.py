@@ -1,11 +1,12 @@
 import os
 import tempfile
-import time
 import unittest
 from collections import defaultdict
-from threading import Thread
 from unittest import mock
+from urllib.parse import urlsplit
 
+import requests
+import responses
 from financeager import (
     DEFAULT_TABLE,
     RECURRENT_TABLE,
@@ -15,9 +16,8 @@ from financeager import (
     setup_log_file_handler,
 )
 from requests import RequestException, Response
-from requests import get as requests_get
 
-from financeager_flask import flask, main, version
+from financeager_flask import flask, httprequests, main, version
 
 TEST_CONFIG_FILEPATH = "/tmp/financeager-test-config"
 TEST_DATA_DIR = tempfile.mkdtemp(prefix="financeager-")
@@ -25,6 +25,8 @@ setup_log_file_handler(log_dir=TEST_DATA_DIR)
 
 
 class CliTestCase(unittest.TestCase):
+    test_interface = None
+
     @classmethod
     def setUpClass(cls):
         # Create test config file for client
@@ -76,7 +78,9 @@ class CliTestCase(unittest.TestCase):
         sinks = clients.Client.Sinks(self.info, self.error)
 
         # Procedure similar to cli.main()
-        plugins = [main.main()]
+        plugin = main.main()
+        plugin.client.proxy = httprequests.Proxy(interface=self.test_interface)
+        plugins = [plugin]
         params = cli._parse_command(args, plugins=plugins)
         configuration = config.Configuration(
             params.pop("config_filepath"), plugins=plugins
@@ -120,6 +124,43 @@ class CliTestCase(unittest.TestCase):
         return response
 
 
+class TestInterface:
+    """Utility interface to enable thorough testing of the entire stack."""
+
+    def __init__(self, test_app):
+        self.client = test_app.test_client()
+
+    def get(self, url, **kwargs):
+        return self._request("get", url=url, **kwargs)
+
+    def post(self, url, **kwargs):
+        return self._request("post", url=url, **kwargs)
+
+    def patch(self, url, **kwargs):
+        return self._request("patch", url=url, **kwargs)
+
+    def delete(self, url, **kwargs):
+        return self._request("delete", url=url, **kwargs)
+
+    def _request(self, method, *, url, **kwargs):
+        """Obtain URL path and send request to Flask test app (this covers the entire
+        back-end). Use the returned JSON to construct a mock response and register it.
+        Use the `requests` interface to simulate issuing the actual request from the
+        front-end.
+        """
+        # Remove kwargs which are not recognized by Flask test client
+        test_kwargs = kwargs.copy()
+        del test_kwargs["auth"]
+        del test_kwargs["timeout"]
+        url_tail = urlsplit(url).path
+        response = getattr(self.client, method)(url_tail, **test_kwargs)
+
+        responses.add(
+            method.upper(), url, json=response.json, status=response.status_code
+        )
+        return requests.request(method, url, **kwargs)
+
+
 @mock.patch("financeager.DATA_DIR", TEST_DATA_DIR)
 class CliFlaskTestCase(CliTestCase):
     HOST_IP = "127.0.0.1:5000"
@@ -132,53 +173,27 @@ default_category = unspecified
 date_format = %%m-%%d
 
 [SERVICE:FLASK]
-host = http://{}
-""".format(
-        HOST_IP
-    )
-
-    @staticmethod
-    def launch_server():
-        # Patch DATA_DIR inside the thread to avoid having it
-        # created/interfering with logs on actual machine
-        import financeager
-
-        financeager.DATA_DIR = TEST_DATA_DIR
-        app = flask.create_app(
-            data_dir=TEST_DATA_DIR,
-            config={
-                "DEBUG": False,  # reloader can only be run in main thread
-                "SERVER_NAME": CliFlaskTestCase.HOST_IP,
-            },
-        )
-
-        def shutdown():
-            from flask import request
-
-            app._server.run("stop")
-            request.environ.get("werkzeug.server.shutdown")()
-            return ""
-
-        # For testing, add rule to shutdown Flask app
-        app.add_url_rule("/stop", "stop", shutdown)
-
-        app.run()
+host = ""
+"""
 
     @classmethod
     def setUpClass(cls):
         super().setUpClass()
 
-        cls.flask_thread = Thread(target=cls.launch_server)
-        cls.flask_thread.start()
-
-        # wait for flask server being launched
-        time.sleep(0.2)
+        app = flask.create_app(
+            data_dir=TEST_DATA_DIR,
+            config={
+                # "DEBUG": False,  # reloader can only be run in main thread
+                "SERVER_NAME": CliFlaskTestCase.HOST_IP,
+            },
+        )
+        cls.test_interface = TestInterface(app)
 
     @classmethod
     def tearDownClass(cls):
-        # Invoke shutting down of Flask app
-        requests_get("http://{}/stop".format(cls.HOST_IP))
+        cls.test_interface = None
 
+    @responses.activate
     def test_add_list_remove(self):
         entry_id = self.cli_run("add cookies -100")
 
@@ -191,6 +206,7 @@ host = http://{}
         response = self.cli_run("pockets")
         self.assertIn(str(self.pocket), response)
 
+    @responses.activate
     def test_add_get_remove_via_eid(self):
         entry_id = self.cli_run("add donuts -50 -c sweets")
 
@@ -205,10 +221,12 @@ host = http://{}
             response, {DEFAULT_TABLE: {}, RECURRENT_TABLE: defaultdict(list)}
         )
 
+    @responses.activate
     def test_add_invalid_entry_table_name(self):
         response = self.cli_run("add stuff 11.11 -t unknown", log_method="error")
         self.assertIn("400", response)
 
+    @responses.activate
     def test_update(self):
         entry_id = self.cli_run("add donuts -50 -c sweets")
 
@@ -218,18 +236,22 @@ host = http://{}
         response = self.cli_run("get {}", format_args=entry_id)
         self.assertIn("Bretzels", response)
 
+    @responses.activate
     def test_update_nonexisting_entry(self):
         response = self.cli_run("update -1 -n a", log_method="error")
         self.assertIn("404", response)
 
+    @responses.activate
     def test_get_nonexisting_entry(self):
         response = self.cli_run("get -1", log_method="error")
         self.assertIn("404", response)
 
+    @responses.activate
     def test_remove_nonexisting_entry(self):
         response = self.cli_run("remove 0", log_method="error")
         self.assertIn("404", response)
 
+    @responses.activate
     def test_recurrent_entry(self):
         entry_id = self.cli_run(
             "add cookies -10 -c food -t recurrent -f "
@@ -255,6 +277,7 @@ host = http://{}
             response, {DEFAULT_TABLE: {}, RECURRENT_TABLE: defaultdict(list)}
         )
 
+    @responses.activate
     def test_copy(self):
         destination_pocket = self.pocket + 1
         self.__class__.pocket += 1
@@ -281,6 +304,7 @@ host = http://{}
         source_printed_content.remove(source_printed_content[2])
         self.assertListEqual(destination_printed_content, source_printed_content)
 
+    @responses.activate
     def test_copy_nonexisting_entry(self):
         destination_pocket = self.pocket + 1
         self.__class__.pocket += 1
@@ -292,7 +316,8 @@ host = http://{}
         )
         self.assertIn("404", response)
 
-    def test_communication_error(self):
+    @responses.activate
+    def _test_communication_error(self):
         with mock.patch("requests.get") as mocked_get:
             response = Response()
             response.status_code = 500
@@ -300,11 +325,12 @@ host = http://{}
             response = self.cli_run("list", log_method="error")
             self.assertIn("500", response)
 
+    @responses.activate
     @mock.patch(
         "financeager_flask.offline.OFFLINE_FILEPATH",
         os.path.join(TEST_DATA_DIR, "financeager-test-offline.json"),
     )
-    def test_offline_feature(self):
+    def _test_offline_feature(self):
         with mock.patch("requests.post") as mocked_post:
             # Try do add an item but provoke CommunicationError
             mocked_post.side_effect = RequestException("did not work")
@@ -348,10 +374,12 @@ host = http://{}
         self.assertEqual({"id": 1}, self.info.call_args_list[1][0][0])
         self.assertEqual("Recovered offline backup.", self.info.call_args_list[2][0][0])
 
+    @responses.activate
     def test_web_version(self):
         response = self.cli_run("web-version")
         self.assertIn(version(), response)
 
+    @responses.activate
     def test_list_recurrent_only(self):
         self.cli_run("add rent -500 -f monthly")
         response = self.cli_run("list --recurrent-only")
