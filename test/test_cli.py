@@ -15,7 +15,7 @@ from financeager import (
     config,
     setup_log_file_handler,
 )
-from requests import RequestException, Response
+from requests import RequestException
 
 from financeager_flask import flask, httprequests, main, version
 
@@ -317,15 +317,6 @@ host = ""
         self.assertIn("404", response)
 
     @responses.activate
-    def _test_communication_error(self):
-        with mock.patch("requests.get") as mocked_get:
-            response = Response()
-            response.status_code = 500
-            mocked_get.return_value = response
-            response = self.cli_run("list", log_method="error")
-            self.assertIn("500", response)
-
-    @responses.activate
     @mock.patch(
         "financeager_flask.offline.OFFLINE_FILEPATH",
         os.path.join(TEST_DATA_DIR, "financeager-test-offline.json"),
@@ -385,6 +376,29 @@ host = ""
         response = self.cli_run("list --recurrent-only")
         self.assertEqual(response["elements"][0]["name"], "rent")
         self.assertEqual(response["elements"][0]["frequency"], "monthly")
+
+
+@mock.patch("financeager.DATA_DIR", TEST_DATA_DIR)
+class CliErrorTestCase(CliTestCase):
+
+    HOST_IP = "127.0.0.1:5000"
+    CONFIG_FILE_CONTENT = """\
+[SERVICE]
+name = flask
+
+[FRONTEND]
+default_category = unspecified
+date_format = %%m-%%d
+
+[SERVICE:FLASK]
+host = ""
+"""
+
+    @responses.activate
+    def test_communication_error(self):
+        responses.get(f"http://{self.HOST_IP}/pockets/{self.pocket}", status=500)
+        response = self.cli_run("list", log_method="error")
+        self.assertIn("Internal Server Error (500)", response)
 
 
 if __name__ == "__main__":
