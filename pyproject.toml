@@ -45,11 +45,12 @@ classifiers = [
 develop = [
   "black==22.8",
   "coverage==6.5",
+  'flake8==6.0.0; python_version >= "3.8"',
+  'flake8==5.0.4; python_version < "3.8"',
+  "flake8-pyproject==1.2.2",
   "gitlint-core==0.17",
   "isort==5.10.1",
   "pre-commit==2.20",
-  'pyproject-flake8==5.0.4; python_version >= "3.8"',
-  'pyproject-flake8==5.0.4.post1; python_version < "3.8"',
 ]
 packaging = [
   "build",
