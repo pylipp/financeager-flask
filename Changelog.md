@@ -9,11 +9,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Removed
 ### Fixed
 
-## [v1.0.0] - 2022-
+## [v1.0.0] - 2023-04-25
 ### Removed
 - Support for Python 3.6 is removed.
 ### Changed
-- The upstream `financeager` dependency is required as lower than v1.2.0.
+- The upstream `financeager` dependency is required as lower than v1.3.0. (#34)
 - The `setup.py` and `setup.cfg` files are replaced by `pyproject.toml` entirely.
 
 ## [v0.5.0.0] - 2022-05-08
