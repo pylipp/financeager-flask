@@ -17,7 +17,7 @@ keywords = [
 license = {text = "GPLv3"}
 authors = [{ name = "Philipp Metzner", email = "beth.aleph@yahoo.de" }]
 dependencies = [
-  "financeager>=1.1.0,<1.2.0",
+  "financeager>=1.1.0,<1.3.0",
   "Flask>=1.0.2",
   "Flask-RESTful>=0.3.5",
   "requests>=2.20.0",
