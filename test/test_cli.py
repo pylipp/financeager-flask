@@ -122,7 +122,6 @@ class CliTestCase(unittest.TestCase):
 
 @mock.patch("financeager.DATA_DIR", TEST_DATA_DIR)
 class CliFlaskTestCase(CliTestCase):
-
     HOST_IP = "127.0.0.1:5000"
     CONFIG_FILE_CONTENT = """\
 [SERVICE]

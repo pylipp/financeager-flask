@@ -34,7 +34,6 @@ class HttpRequestProxyTestCase(unittest.TestCase):
         with patch(
             "financeager_flask.httprequests.requests.post", side_effect=self.mock_post
         ) as post_patch:
-
             proxy.run("pockets")
 
             url = "{}{}".format(DEFAULT_HOST, POCKETS_TAIL)

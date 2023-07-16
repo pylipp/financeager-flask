@@ -7,7 +7,7 @@ Plugin that enables you to run [financeager](https://github.com/pylipp/financeag
 
 ## Installation
 
-`financeager-flask` requires Python 3.7 or higher.
+`financeager-flask` requires Python 3.8 or higher.
 
     pip install financeager-flask
 
