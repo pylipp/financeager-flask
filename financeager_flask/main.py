@@ -36,10 +36,12 @@ class _CliOptions(plugin.PluginCliOptions):
 class _Client(clients.Client):
     """Client for communicating with the financeager Flask webservice."""
 
+    proxy = None
+
     def __init__(self, *, configuration, sinks):
         """Set up proxy and urllib3 logger."""
         super().__init__(configuration=configuration, sinks=sinks)
-        self.proxy = httprequests.Proxy(
+        self.proxy = _Client.proxy or httprequests.Proxy(
             http_config=configuration.get_section(CONFIG_SECTION_NAME)
         )
 
