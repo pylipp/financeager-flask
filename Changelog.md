@@ -9,9 +9,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Removed
 ### Fixed
 
-## [v1.xxx] - 2023-
+## [v1.1.1] - 2024-01-04
 ### Added
 - Support Python 3.11 and 3.12.
+### Changed
+- Update GitHub release action.
 
 ## [v1.1.0] - 2023-07-16
 ### Removed
